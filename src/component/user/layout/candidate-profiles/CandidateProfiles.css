@@ -1,0 +1,554 @@
+.candidate-profiles {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 100%);
+    padding: 20px 0;
+}
+
+.profiles-header {
+    text-align: center;
+    margin-bottom: 40px;
+    color: white;
+    position: relative;
+}
+
+.profiles-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.profiles-header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.back-btn {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-color: white;
+    color: white;
+    border-radius: 25px;
+    padding: 10px 20px;
+}
+
+.back-btn:hover {
+    background: white;
+    color: #fd79a8;
+}
+
+/* Filter Section */
+.filter-section {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.filter-section h3 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #fd79a8;
+    padding-bottom: 10px;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.filter-buttons .btn {
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* Candidates Overview */
+.candidates-overview {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+}
+
+.candidates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.candidate-overview-card {
+    border: 2px solid #ecf0f1;
+    border-radius: 15px;
+    padding: 25px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: white;
+    text-align: center;
+}
+
+.candidate-overview-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    border-color: #fd79a8;
+}
+
+.candidate-photo {
+    margin-bottom: 20px;
+}
+
+.candidate-photo img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #ecf0f1;
+}
+
+.candidate-overview-card:hover .candidate-photo img {
+    border-color: #fd79a8;
+}
+
+.candidate-basic-info h4 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.candidate-basic-info .party {
+    color: #fd79a8;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.candidate-basic-info .position {
+    color: #6c757d;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.candidate-basic-info .experience-summary {
+    color: #555;
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+.card-action {
+    color: #fd79a8;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    background: #fff5f8;
+    border-radius: 8px;
+}
+
+/* Detailed Profile View */
+.candidate-detail {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+}
+
+.candidate-header {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 2px solid #ecf0f1;
+}
+
+.candidate-photo-large img {
+    width: 200px;
+    height: 200px;
+    border-radius: 15px;
+    object-fit: cover;
+    border: 4px solid #fd79a8;
+}
+
+.candidate-info h2 {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.party-position {
+    color: #fd79a8;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.age {
+    color: #6c757d;
+    margin-bottom: 20px;
+}
+
+.education h5 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.education p {
+    color: #555;
+    line-height: 1.5;
+}
+
+/* Profile Sections */
+.profile-section {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 25px;
+}
+
+.profile-section h4 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #fd79a8;
+    padding-bottom: 8px;
+}
+
+/* Experience Timeline */
+.experience-timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.experience-timeline:before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #fd79a8;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -37px;
+    top: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fd79a8;
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px #fd79a8;
+}
+
+.timeline-content p {
+    color: #555;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Achievements List */
+.achievements-list {
+    list-style: none;
+    padding: 0;
+}
+
+.achievements-list li {
+    position: relative;
+    padding: 12px 0 12px 30px;
+    color: #555;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.achievements-list li:before {
+    content: '★';
+    position: absolute;
+    left: 0;
+    color: #fd79a8;
+    font-size: 16px;
+}
+
+.achievements-list li:last-child {
+    border-bottom: none;
+}
+
+/* Platform Grid */
+.platform-grid {
+    display: grid;
+    gap: 20px;
+}
+
+.platform-item {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    border-left: 4px solid #fd79a8;
+}
+
+.platform-item h6 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: capitalize;
+}
+
+.platform-item p {
+    color: #555;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Endorsements */
+.endorsements-list {
+    display: grid;
+    gap: 12px;
+}
+
+.endorsement-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    color: #555;
+}
+
+.endorsement-item i {
+    color: #28a745;
+    font-size: 16px;
+}
+
+/* Social Media Links */
+.social-media-links {
+    display: grid;
+    gap: 12px;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.social-link:hover {
+    text-decoration: none;
+    transform: translateX(5px);
+}
+
+.social-link.twitter {
+    background: #1da1f2;
+}
+
+.social-link.facebook {
+    background: #4267b2;
+}
+
+.social-link.website {
+    background: #6c757d;
+}
+
+.social-link i {
+    font-size: 18px;
+}
+
+/* Financial Information */
+.financial-info {
+    display: grid;
+    gap: 15px;
+}
+
+.financial-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    border-left: 4px solid #28a745;
+}
+
+.financial-item label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.financial-item span {
+    color: #28a745;
+    font-weight: 600;
+}
+
+/* Profile Actions */
+.profile-actions {
+    border-top: 2px solid #ecf0f1;
+    padding-top: 30px;
+    text-align: center;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.profile-actions .btn {
+    border-radius: 25px;
+    padding: 12px 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.profile-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .candidate-profiles {
+        padding: 10px;
+    }
+    
+    .profiles-header {
+        position: relative;
+        padding-top: 50px;
+    }
+    
+    .back-btn {
+        position: relative;
+        margin-bottom: 20px;
+    }
+    
+    .profiles-header h1 {
+        font-size: 2rem;
+    }
+    
+    .filter-section,
+    .candidates-overview,
+    .candidate-detail {
+        padding: 20px;
+    }
+    
+    .filter-buttons {
+        justify-content: center;
+    }
+    
+    .candidates-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .candidate-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+    
+    .candidate-photo-large img {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .profile-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .profile-actions .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .candidate-profiles {
+        background: white;
+        color: black;
+    }
+    
+    .back-btn,
+    .profile-actions,
+    .filter-section {
+        display: none;
+    }
+    
+    .candidates-overview,
+    .candidate-detail {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+    
+    .social-link {
+        color: black !important;
+        background: white !important;
+        border: 1px solid #ccc;
+    }
+}
+
+/* Accessibility */
+.candidate-overview-card:focus,
+.filter-buttons .btn:focus,
+.profile-actions .btn:focus {
+    outline: 3px solid #fd79a8;
+    outline-offset: 2px;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .candidate-profiles {
+        background: #000;
+        color: #fff;
+    }
+    
+    .filter-section,
+    .candidates-overview,
+    .candidate-detail,
+    .profile-section,
+    .platform-item,
+    .endorsement-item,
+    .financial-item {
+        background: #fff;
+        color: #000;
+        border: 2px solid #000;
+    }
+    
+    .candidate-overview-card {
+        border-width: 3px;
+    }
+    
+    .candidate-overview-card:hover {
+        border-color: #000;
+        background: #f0f0f0;
+    }
+}
+
+/* Animation */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.candidate-overview-card,
+.profile-section {
+    animation: slideIn 0.5s ease-out;
+}

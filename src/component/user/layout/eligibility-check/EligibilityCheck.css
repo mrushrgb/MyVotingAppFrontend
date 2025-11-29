@@ -1,0 +1,393 @@
+.eligibility-check {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    padding: 20px 0;
+}
+
+.eligibility-header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: white;
+}
+
+.eligibility-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.eligibility-header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.back-btn {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-color: white;
+    color: white;
+    border-radius: 25px;
+    padding: 10px 20px;
+}
+
+.back-btn:hover {
+    background: white;
+    color: #74b9ff;
+}
+
+.voter-info-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.voter-info-card h3 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 25px;
+    border-bottom: 3px solid #74b9ff;
+    padding-bottom: 10px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item label {
+    font-weight: 600;
+    color: #34495e;
+    margin: 0;
+    flex: 0 0 150px;
+}
+
+.info-item span {
+    color: #555;
+    text-align: right;
+    flex: 1;
+}
+
+.full-width-info .info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.full-width-info .info-item span {
+    margin-top: 5px;
+    text-align: left;
+}
+
+.eligibility-checks-section {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.eligibility-checks-section h3 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 25px;
+    border-bottom: 3px solid #74b9ff;
+    padding-bottom: 10px;
+}
+
+.checks-grid {
+    display: grid;
+    gap: 20px;
+}
+
+.eligibility-check-item {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border: 2px solid #ecf0f1;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.eligibility-check-item.passed {
+    border-color: #27ae60;
+    background: #f8fff8;
+}
+
+.eligibility-check-item.failed {
+    border-color: #e74c3c;
+    background: #fff8f8;
+}
+
+.eligibility-check-item.pending {
+    border-color: #f39c12;
+    background: #fffcf8;
+}
+
+.check-icon {
+    font-size: 30px;
+    margin-right: 20px;
+    flex: 0 0 60px;
+    text-align: center;
+}
+
+.check-content {
+    flex: 1;
+}
+
+.check-content h5 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.check-content p {
+    color: #7f8c8d;
+    margin: 0;
+    font-size: 14px;
+}
+
+.check-status {
+    font-size: 24px;
+    flex: 0 0 40px;
+    text-align: center;
+}
+
+.overall-eligibility {
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.overall-eligibility.eligible {
+    background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+    color: white;
+}
+
+.overall-eligibility.not-eligible {
+    background: linear-gradient(135deg, #e17055 0%, #d63031 100%);
+    color: white;
+}
+
+.status-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.status-icon {
+    font-size: 48px;
+    opacity: 0.9;
+}
+
+.status-text h4 {
+    font-weight: 700;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.status-text p {
+    opacity: 0.9;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.action-buttons {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.action-buttons .btn {
+    margin: 0 10px 10px 0;
+    border-radius: 25px;
+    padding: 12px 30px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.action-buttons .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.help-section {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.help-section h4 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 25px;
+    text-align: center;
+    border-bottom: 3px solid #74b9ff;
+    padding-bottom: 10px;
+}
+
+.help-card {
+    text-align: center;
+    padding: 25px;
+    border: 2px solid #ecf0f1;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.help-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border-color: #74b9ff;
+}
+
+.help-card i {
+    font-size: 36px;
+    color: #74b9ff;
+    margin-bottom: 15px;
+}
+
+.help-card h5 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.help-card p {
+    color: #7f8c8d;
+    margin: 0;
+}
+
+/* Loading animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.fa-spinner.fa-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Print styles */
+@media print {
+    .eligibility-check {
+        background: white;
+        color: black;
+    }
+    
+    .back-btn,
+    .action-buttons {
+        display: none;
+    }
+    
+    .voter-info-card,
+    .eligibility-checks-section,
+    .overall-eligibility,
+    .help-section {
+        box-shadow: none;
+        border: 1px solid #ccc;
+        margin-bottom: 20px;
+    }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .eligibility-check {
+        padding: 10px;
+    }
+    
+    .eligibility-header {
+        position: relative;
+        padding-top: 50px;
+    }
+    
+    .back-btn {
+        position: relative;
+        margin-bottom: 20px;
+    }
+    
+    .eligibility-header h1 {
+        font-size: 2rem;
+    }
+    
+    .voter-info-card,
+    .eligibility-checks-section,
+    .help-section {
+        padding: 20px;
+    }
+    
+    .info-item {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+    
+    .info-item label {
+        flex: none;
+        margin-bottom: 5px;
+    }
+    
+    .info-item span {
+        text-align: left;
+    }
+    
+    .eligibility-check-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .check-icon {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    .status-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .action-buttons .btn {
+        display: block;
+        width: 100%;
+        margin: 10px 0;
+    }
+}
+
+/* Accessibility improvements */
+.eligibility-check-item:focus {
+    outline: 3px solid #74b9ff;
+    outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .eligibility-check {
+        background: #000;
+        color: #fff;
+    }
+    
+    .voter-info-card,
+    .eligibility-checks-section,
+    .help-section {
+        background: #fff;
+        color: #000;
+        border: 2px solid #000;
+    }
+    
+    .eligibility-check-item {
+        border-width: 3px;
+    }
+}
