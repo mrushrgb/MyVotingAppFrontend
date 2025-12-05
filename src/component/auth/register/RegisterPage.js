@@ -204,11 +204,14 @@ const RegisterPage = () => {
             // or single message formats { msg } or { message }
             const serverMsg = serverValidation || e.response?.data?.msg || e.response?.data?.message;
             const message = serverMsg || e.message || 'An error occurred';
-            if (e.response?.status === 400 || e.response?.status === 409) {
-                Swal.fire({ title: 'Warning !', icon: 'warning', text: message, button: 'Ok!' });
-            } else {
-                Swal.fire({ title: 'Warning !', icon: 'warning', text: message.includes('connect') ? message : 'Please connect your database', button: 'Ok!' });
-            }
+            
+            // Display the actual error message from the backend
+            Swal.fire({ 
+                title: 'Warning !', 
+                icon: 'warning', 
+                text: message, 
+                confirmButtonText: 'Ok!' 
+            });
         }
     };
 
