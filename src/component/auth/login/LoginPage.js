@@ -9,7 +9,6 @@ import { BASE_URL } from '../../../config/api';
 const LoginPage = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const [faceAuthLoading, setFaceAuthLoading] = useState(false);
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -240,7 +239,7 @@ const LoginPage = () => {
                                                 placeholder="Enter the your email"
                                                 value={formData.email}
                                                 onChange={handleInputChange}
-                                                disabled={loading || faceAuthLoading}
+                                                disabled={loading}
                                                 autoComplete="email"
                                             />
                                         </div>
@@ -264,7 +263,7 @@ const LoginPage = () => {
                                                 placeholder="Enter your password"
                                                 value={formData.password}
                                                 onChange={handleInputChange}
-                                                disabled={loading || faceAuthLoading}
+                                                disabled={loading}
                                                 autoComplete="current-password"
                                             />
                                         </div>
@@ -287,7 +286,7 @@ const LoginPage = () => {
                                                 name="loginAs"
                                                 value={formData.loginAs}
                                                 onChange={handleInputChange}
-                                                disabled={loading || faceAuthLoading}
+                                                disabled={loading}
                                                 style={{
                                                     width: '100%',
                                                     padding: '12px 16px',
@@ -318,7 +317,7 @@ const LoginPage = () => {
                                                     placeholder="Enter admin secret key"
                                                     value={formData.adminSecretKey}
                                                     onChange={handleInputChange}
-                                                    disabled={loading || faceAuthLoading}
+                                                    disabled={loading}
                                                     autoComplete="off"
                                                 />
                                             </div>
@@ -337,7 +336,7 @@ const LoginPage = () => {
                                     <button
                                         type="submit"
                                         className={`primary-button ${loading ? 'loading' : ''}`}
-                                        disabled={loading || faceAuthLoading}
+                                        disabled={loading}
                                     >
                                         {loading ? (
                                             <>
@@ -365,7 +364,7 @@ const LoginPage = () => {
                                             type="button"
                                             className="link-button primary-link"
                                             onClick={() => navigate('/register')}
-                                            disabled={loading || faceAuthLoading}
+                                            disabled={loading}
                                         >
                                             Register
                                         </button>

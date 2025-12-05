@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import RegisterPage from './component/auth/register/RegisterPage';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import LoginPage from './component/auth/login/LoginPage';
 import UserDashboard from './component/user/layout/dashboard/UserDashboard';
 import VoterDashboard from './component/user/layout/voter-dashboard/VoterDashboard';
@@ -14,6 +14,7 @@ import ElectionManagement from './component/admin/layout/election-management/Ele
 import DisputeManagement from './component/admin/layout/dispute-management/DisputeManagement';
 import TurnoutMonitoring from './component/admin/layout/turnout-monitoring/TurnoutMonitoring';
 import SystemLogs from './component/admin/layout/system-logs/SystemLogs';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // BASE_URL is now centralized in src/config/api.js
 // Import from there if needed: import { BASE_URL } from './config/api';
@@ -23,28 +24,79 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<VoterDashboard />} />
+        {/* Redirect root to login page */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        
+        {/* Public Routes - Login and Register only */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/new-user" element={<RegisterPage />} />
 
-        {/* Direct User/Voter Routes (for development) */}
-        <Route path="/user" element={<UserDashboard />} />
-        <Route path="/voter/dashboard" element={<VoterDashboard />} />
-        <Route path="/voter/eligibility" element={<EligibilityCheck />} />
-        <Route path="/voter/voting" element={<VotingPage />} />
-        <Route path="/voter/candidates" element={<CandidateProfiles />} />
-        <Route path="/voter/status" element={<VotingStatus />} />
+        {/* Protected User/Voter Routes */}
+        <Route path="/user" element={
+          <ProtectedRoute>
+            <UserDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/voter/dashboard" element={
+          <ProtectedRoute>
+            <VoterDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/voter/eligibility" element={
+          <ProtectedRoute>
+            <EligibilityCheck />
+          </ProtectedRoute>
+        } />
+        <Route path="/voter/voting" element={
+          <ProtectedRoute>
+            <VotingPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/voter/candidates" element={
+          <ProtectedRoute>
+            <CandidateProfiles />
+          </ProtectedRoute>
+        } />
+        <Route path="/voter/status" element={
+          <ProtectedRoute>
+            <VotingStatus />
+          </ProtectedRoute>
+        } />
 
-        {/* Direct Admin Routes (for development) */}
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/elections" element={<ElectionManagement />} />
-        <Route path="/admin/disputes" element={<DisputeManagement />} />
-        <Route path="/admin/turnout" element={<TurnoutMonitoring />} />
-        <Route path="/admin/logs" element={<SystemLogs />} />
+        {/* Protected Admin Routes */}
+        <Route path="/admin/dashboard" element={
+          <ProtectedRoute requiredRole="admin">
+            <AdminDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/elections" element={
+          <ProtectedRoute requiredRole="admin">
+            <ElectionManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/disputes" element={
+          <ProtectedRoute requiredRole="admin">
+            <DisputeManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/turnout" element={
+          <ProtectedRoute requiredRole="admin">
+            <TurnoutMonitoring />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/logs" element={
+          <ProtectedRoute requiredRole="admin">
+            <SystemLogs />
+          </ProtectedRoute>
+        } />
 
-        {/* Additional Routes */}
-        <Route path="/auth" element={<UserDashboard />} />
+        {/* Additional Protected Routes */}
+        <Route path="/auth" element={
+          <ProtectedRoute>
+            <UserDashboard />
+          </ProtectedRoute>
+        } />
       </Routes>
     </div>
   );
