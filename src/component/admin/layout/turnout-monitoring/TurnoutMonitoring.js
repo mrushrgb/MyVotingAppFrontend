@@ -341,14 +341,25 @@ const TurnoutMonitoring = () => {
                                                 </span>
                                             </div>
                                             <div className="demographic-details">
+                                                <div className="demographic-count">
+                                                    {gender.votedCount.toLocaleString()} / {gender.totalVoters.toLocaleString()}
+                                                </div>
+                                                <div className="progress-bar-small">
+                                                    <div 
+                                                        className="progress-fill-small"
+                                                        style={{ 
+                                                            width: `${gender.percentage}%`,
+                                                            backgroundColor: getPercentageColor(gender.percentage)
+                                                        }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </>
-            )}
-        </div>
-    );
-};
-
-export default TurnoutMonitoring;
                 </>
             )}
         </div>
