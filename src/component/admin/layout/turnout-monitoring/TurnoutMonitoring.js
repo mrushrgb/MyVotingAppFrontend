@@ -12,7 +12,8 @@ const TurnoutMonitoring = () => {
             votedCount: 0,
             percentage: 0
         },
-        candidates: []
+        candidates: [],
+        districtDistribution: []
     });
     const [refreshInterval, setRefreshInterval] = useState(5); // Auto-refresh every 5 seconds
     const [lastUpdated, setLastUpdated] = useState(new Date());
@@ -236,6 +237,44 @@ const TurnoutMonitoring = () => {
                                 </div>
                             )}
                         </div>
+
+                        {/* District Distribution */}
+                        {turnoutData.districtDistribution && turnoutData.districtDistribution.length > 0 && (
+                            <div className="monitoring-section">
+                                <h2>📍 Vote Distribution by District</h2>
+                                <div className="district-grid">
+                                    {turnoutData.districtDistribution.map((district, index) => (
+                                        <div key={index} className="district-card">
+                                            <div className="district-header">
+                                                <h4>{district.district}</h4>
+                                                <span className="district-votes">{district.totalVotes} votes ({district.percentage}%)</span>
+                                            </div>
+                                            
+                                            <div className="district-progress">
+                                                <div 
+                                                    className="progress-bar"
+                                                    style={{ 
+                                                        width: `${district.percentage}%`,
+                                                        backgroundColor: getPercentageColor(parseFloat(district.percentage))
+                                                    }}
+                                                ></div>
+                                            </div>
+
+                                            <div className="district-candidates">
+                                                {district.candidates.map((candidate, cIndex) => (
+                                                    candidate.votes > 0 && (
+                                                        <div key={cIndex} className="district-candidate-item">
+                                                            <span className="candidate-name">{candidate.name} ({candidate.party})</span>
+                                                            <span className="candidate-votes">{candidate.votes} votes</span>
+                                                        </div>
+                                                    )
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </>
             )}

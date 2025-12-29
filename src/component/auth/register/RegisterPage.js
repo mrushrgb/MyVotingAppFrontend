@@ -33,7 +33,8 @@ const RegisterPage = () => {
         phoneNumber: "",
         address: "",
         dob: "",
-        gender: ""
+        gender: "",
+        district: ""
     });
 
     const [errors, setErrors] = useState({
@@ -44,7 +45,8 @@ const RegisterPage = () => {
         adminSecretKey: '',
         phoneNumber: '',
         dob: '',
-        gender: ''
+        gender: '',
+        district: ''
     });
 
     const handleChange = (event) => {
@@ -55,7 +57,7 @@ const RegisterPage = () => {
 
     const validateForm = () => {
         let valid = true;
-        const newErrors = { userName: '', email: '', password: '', phoneNumber: '', dob: '', gender: '' };
+        const newErrors = { userName: '', email: '', password: '', phoneNumber: '', dob: '', gender: '', district: '' };
 
         if (!inputs.userName.trim()) {
             newErrors.userName = 'User Name is required';
@@ -105,6 +107,11 @@ const RegisterPage = () => {
             valid = false;
         }
 
+        if (!inputs.district.trim()) {
+            newErrors.district = 'District is required';
+            valid = false;
+        }
+
         // Validate admin secret key if registering as admin
         if (inputs.role === 'admin' && !inputs.adminSecretKey.trim()) {
             newErrors.adminSecretKey = 'Admin Secret Key is required for admin registration';
@@ -146,7 +153,8 @@ const RegisterPage = () => {
             phoneNumber: inputs.phoneNumber,
             address: inputs.address,
             dob: inputs.dob,
-            gender: inputs.gender
+            gender: inputs.gender,
+            district: inputs.district
         };
 
         // Add admin secret key to payload if registering as admin
@@ -354,6 +362,42 @@ const RegisterPage = () => {
                                                     <option value="Female">Female</option>
                                                 </select>
                                                 {errors.gender && <div className="invalid-feedback">{errors.gender}</div>}
+                                            </div>
+
+                                            <div className="col-md-6">
+                                                <label htmlFor="district" className="form-label fw-semibold">
+                                                    <i className="fas fa-map-marked-alt me-2 text-muted"></i>
+                                                    District <span className="text-danger">*</span>
+                                                </label>
+                                                <select className={`form-select form-select-lg ${errors.district && 'is-invalid'}`} id="district" name='district' value={inputs.district} onChange={handleChange}>
+                                                    <option value="" disabled>Select your district</option>
+                                                    <option value="Colombo">Colombo</option>
+                                                    <option value="Gampaha">Gampaha</option>
+                                                    <option value="Kalutara">Kalutara</option>
+                                                    <option value="Kandy">Kandy</option>
+                                                    <option value="Matale">Matale</option>
+                                                    <option value="Nuwara Eliya">Nuwara Eliya</option>
+                                                    <option value="Galle">Galle</option>
+                                                    <option value="Matara">Matara</option>
+                                                    <option value="Hambantota">Hambantota</option>
+                                                    <option value="Jaffna">Jaffna</option>
+                                                    <option value="Kilinochchi">Kilinochchi</option>
+                                                    <option value="Mannar">Mannar</option>
+                                                    <option value="Vavuniya">Vavuniya</option>
+                                                    <option value="Mullaitivu">Mullaitivu</option>
+                                                    <option value="Batticaloa">Batticaloa</option>
+                                                    <option value="Ampara">Ampara</option>
+                                                    <option value="Trincomalee">Trincomalee</option>
+                                                    <option value="Kurunegala">Kurunegala</option>
+                                                    <option value="Puttalam">Puttalam</option>
+                                                    <option value="Anuradhapura">Anuradhapura</option>
+                                                    <option value="Polonnaruwa">Polonnaruwa</option>
+                                                    <option value="Badulla">Badulla</option>
+                                                    <option value="Moneragala">Moneragala</option>
+                                                    <option value="Ratnapura">Ratnapura</option>
+                                                    <option value="Kegalle">Kegalle</option>
+                                                </select>
+                                                {errors.district && <div className="invalid-feedback">{errors.district}</div>}
                                             </div>
 
                                             <div className="col-12">
