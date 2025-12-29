@@ -69,25 +69,6 @@ const TurnoutMonitoring = () => {
             console.error('Error loading turnout data:', error);
         }
     };
-                        { group: '18-24', totalVoters: 2156, votedCount: 1234, percentage: 57.2 },
-                        { group: '25-34', totalVoters: 3420, votedCount: 2145, percentage: 62.7 },
-                        { group: '35-44', totalVoters: 3890, votedCount: 2456, percentage: 63.1 },
-                        { group: '45-54', totalVoters: 2940, votedCount: 1789, percentage: 60.8 },
-                        { group: '55-64', totalVoters: 1890, votedCount: 1012, percentage: 53.5 },
-                        { group: '65+', totalVoters: 1124, votedCount: 309, percentage: 27.5 }
-                    ],
-                    genderDistribution: [
-                        { gender: 'Male', totalVoters: 7890, votedCount: 4523, percentage: 57.3 },
-                        { gender: 'Female', totalVoters: 7530, votedCount: 4422, percentage: 58.7 }
-                    ]
-                }
-            };
-            setTurnoutData(mockData);
-            setLastUpdated(new Date());
-        } catch (error) {
-            console.error('Error loading turnout data:', error);
-        }
-    };
 
     const getPercentageColor = (percentage) => {
         if (percentage >= 70) return '#28a745';
