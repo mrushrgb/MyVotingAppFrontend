@@ -43,7 +43,8 @@ const VotingPage = () => {
             try {
                 const token = localStorage.getItem('userToken') || localStorage.getItem('token');
                 const headers = token ? { Authorization: `Bearer ${token}` } : {};
-                const res = await axios.get(`${BASE_URL}/api/user/elections?active=true`, { headers });
+                // Get ALL elections, not just active ones
+                const res = await axios.get(`${BASE_URL}/api/user/elections`, { headers });
                 // normalize backend shapes: backend may return flat `candidates` (no positions)
                 const raw = (res.data || []);
                 const userId = localStorage.getItem('id') || null;
