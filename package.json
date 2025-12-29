@@ -32,7 +32,8 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
+    "build": "craco build && npm run copy-config",
+    "copy-config": "cp staticwebapp.config.json build/staticwebapp.config.json || copy staticwebapp.config.json build\\staticwebapp.config.json",
     "test": "craco test",
     "eject": "react-scripts eject"
   },
