@@ -1,27 +1,99 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import html2pdf from 'html2pdf.js';
+import axios from 'axios';
+import { BASE_URL } from '../../../../config/api';
 import './VotingStatus.css';
 
 const VotingStatus = () => {
     const navigate = useNavigate();
     const location = useLocation();
     
-    const [votingHistory, setVotingHistory] = useState([
-        {
-            id: 1,
-            electionTitle: 'Presidential Election 2024',
-            date: '2024-11-05',
-            status: 'completed',
-            timestamp: '2024-11-05T14:30:00Z',
-            votes: {
-                president: { candidate: 'Jane Doe', party: 'Democratic Party' }
-            },
-            receiptId: 'RCP-2024-001-VTR123456789'
-        }
-    ]);
-
+    const [votingHistory, setVotingHistory] = useState([]);
     const [currentVote, setCurrentVote] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    // Load real voting history from backend
+    useEffect(() => {
+        const loadVotingHistory = async () => {
+            try {
+                const token = localStorage.getItem('userToken') || localStorage.getItem('token');
+                const userId = localStorage.getItem('id');
+                
+                if (!token || !userId) {
+                    setLoading(false);
+                    return;
+                }
+
+                const headers = { Authorization: `Bearer ${token}` };
+                
+                // Fetch all elections
+                const electionsRes = await axios.get(`${BASE_URL}/api/user/elections`, { headers });
+                const elections = electionsRes.data || [];
+                
+                // Filter elections where user has voted
+                const votedElections = elections.filter(election => {
+                    const votes = election.votes || [];
+                    return votes.some(v => {
+                        const voteUserId = v.userId?.toString() || v.userId?._id?.toString() || '';
+                        return voteUserId === userId;
+                    });
+                });
+
+                // Get user info
+                let savedUserRaw = localStorage.getItem('userData') || localStorage.getItem('voterData');
+                let savedUser = null;
+                try { savedUser = savedUserRaw ? JSON.parse(savedUserRaw) : null; } catch (e) { savedUser = null; }
+
+                const voterName = savedUser?.name || savedUser?.auth || 'Voter';
+                const voterId = savedUser?.voterId || savedUser?.id || savedUser?._id || ('VTR' + Math.floor(100000 + Math.random() * 900000));
+                const constituency = savedUser?.constituency || savedUser?.district || 'Unknown';
+
+                // Transform voted elections into history format
+                const history = votedElections.map(election => {
+                    const userVote = (election.votes || []).find(v => {
+                        const voteUserId = v.userId?.toString() || v.userId?._id?.toString() || '';
+                        return voteUserId === userId;
+                    });
+
+                    const candidateId = userVote?.candidateId?.toString();
+                    const candidate = (election.candidates || []).find(c => 
+                        (c._id?.toString() || c.id?.toString()) === candidateId
+                    );
+
+                    const votes = {};
+                    if (candidate) {
+                        votes['default'] = {
+                            candidate: candidate.name || 'Unknown',
+                            party: candidate.party || 'Unknown',
+                            position: 'Candidate'
+                        };
+                    }
+
+                    return {
+                        id: election._id || election.id,
+                        electionTitle: election.title,
+                        date: election.startsAt ? new Date(election.startsAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+                        status: 'completed',
+                        timestamp: election.createdAt || new Date().toISOString(),
+                        votes,
+                        voterName,
+                        voterId,
+                        constituency,
+                        receiptId: `RCP-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}-${voterId}`
+                    };
+                });
+
+                setVotingHistory(history);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error loading voting history:', error);
+                setLoading(false);
+            }
+        };
+
+        loadVotingHistory();
+    }, []);
 
     useEffect(() => {
         // If coming from voting page with new vote
@@ -33,7 +105,7 @@ const VotingStatus = () => {
 
             const voterName = savedUser?.name || savedUser?.auth || 'Voter';
             const voterId = savedUser?.voterId || savedUser?.id || savedUser?._id || ('VTR' + Math.floor(100000 + Math.random() * 900000));
-            const constituency = savedUser?.constituency || 'Unknown';
+            const constituency = savedUser?.constituency || savedUser?.district || 'Unknown';
 
             const newVote = {
                 id: Date.now(),
@@ -247,7 +319,12 @@ const VotingStatus = () => {
                 {/* Voting History */}
                 <div className="voting-history-section">
                     <h3>Voting History</h3>
-                    {votingHistory.length > 0 ? (
+                    {loading ? (
+                        <div className="loading-state">
+                            <i className="fas fa-spinner fa-spin"></i>
+                            <p>Loading your voting history...</p>
+                        </div>
+                    ) : votingHistory.length > 0 ? (
                         <div className="history-list">
                             {votingHistory.map(vote => (
                                 <div key={vote.id} className="history-item">
