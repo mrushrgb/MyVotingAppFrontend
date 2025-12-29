@@ -14,6 +14,7 @@ const ElectionManagement = () => {
         description: '',
         startsAt: '',
         endsAt: '',
+        status: 'draft',
         candidates: []
     });
 
@@ -136,6 +137,7 @@ const ElectionManagement = () => {
                 description: '',
                 startsAt: '',
                 endsAt: '',
+                status: 'draft',
                 candidates: []
             });
             setShowCreateForm(false);
@@ -155,6 +157,7 @@ const ElectionManagement = () => {
             description: election.description,
             startsAt: election.startsAt ? election.startsAt.split('T')[0] : '',
             endsAt: election.endsAt ? election.endsAt.split('T')[0] : '',
+            status: election.status || 'draft',
             candidates: election.candidates || []
         });
         setShowCreateForm(true);
@@ -261,6 +264,22 @@ const ElectionManagement = () => {
                                     required
                                 />
                             </div>
+
+                            <div className="form-group">
+                                <label>Status *</label>
+                                <select
+                                    name="status"
+                                    value={formData.status}
+                                    onChange={handleInputChange}
+                                    required
+                                >
+                                    <option value="draft">Draft</option>
+                                    <option value="scheduled">Scheduled</option>
+                                    <option value="active">Active (Voters can vote)</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div className="form-group">
@@ -349,6 +368,7 @@ const ElectionManagement = () => {
                                         description: '',
                                         startsAt: '',
                                         endsAt: '',
+                                        status: 'draft',
                                         candidates: []
                                     });
                                 }}
@@ -375,6 +395,20 @@ const ElectionManagement = () => {
                             <div className="election-header-card">
                                 <div className="election-title-section">
                                     <h3>{election.title}</h3>
+                                    <span 
+                                        className="election-status"
+                                        style={{ 
+                                            backgroundColor: getStatusColor(election.status || 'draft'),
+                                            color: 'white',
+                                            padding: '4px 12px',
+                                            borderRadius: '12px',
+                                            fontSize: '12px',
+                                            fontWeight: 'bold',
+                                            marginLeft: '10px'
+                                        }}
+                                    >
+                                        {(election.status || 'draft').toUpperCase()}
+                                    </span>
                                 </div>
                                 <div className="election-actions">
                                     <button 
@@ -397,6 +431,13 @@ const ElectionManagement = () => {
                             <p className="election-description">{election.description}</p>
 
                             <div className="election-details">
+                                <div className="detail-item">
+                                    <span className="detail-label">Status:</span>
+                                    <span className="detail-value" style={{ fontWeight: 'bold', color: getStatusColor(election.status || 'draft') }}>
+                                        {election.status === 'active' ? '✅ ACTIVE - Voters can vote!' : (election.status || 'draft').toUpperCase()}
+                                    </span>
+                                </div>
+
                                 <div className="detail-item">
                                     <span className="detail-label">Period:</span>
                                     <span className="detail-value">

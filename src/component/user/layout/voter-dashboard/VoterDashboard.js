@@ -86,8 +86,8 @@ const VoterDashboard = () => {
             try {
                 const token = localStorage.getItem('userToken') || localStorage.getItem('token');
                 const headers = token ? { Authorization: `Bearer ${token}` } : {};
-                // Get ALL elections, not just active ones
-                const res = await axios.get(`${BASE_URL}/api/user/elections`, { headers });
+                // Get ACTIVE elections only (status='active')
+                const res = await axios.get(`${BASE_URL}/api/user/elections?active=true`, { headers });
 
                 if (!mounted) return;
                 setAvailableElectionsCount((res.data || []).length);
