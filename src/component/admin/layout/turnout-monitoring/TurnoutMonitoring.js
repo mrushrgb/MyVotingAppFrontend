@@ -237,23 +237,6 @@ const TurnoutMonitoring = () => {
                             )}
                         </div>
                     </div>
-                                                    {region.votedCount.toLocaleString()} / {region.totalVoters.toLocaleString()}
-                                                </div>
-                                                <div className="progress-bar-small">
-                                                    <div 
-                                                        className="progress-fill-small"
-                                                        style={{ 
-                                                            width: `${region.percentage}%`,
-                                                            backgroundColor: getPercentageColor(region.percentage)
-                                                        }}
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
 
                         {/* Hourly Turnout Chart */}
                         <div className="monitoring-section">
