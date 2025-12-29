@@ -328,18 +328,30 @@ const VotingPage = () => {
         switch (status) {
             case 'active':
                 return <span className="badge badge-success">Active - Vote Now</span>;
+            case 'scheduled':
+                return <span className="badge badge-info">Scheduled</span>;
             case 'upcoming':
                 return <span className="badge badge-warning">Upcoming</span>;
             case 'completed':
                 return <span className="badge badge-secondary">Completed</span>;
+            case 'draft':
+                return <span className="badge badge-light">Draft</span>;
+            case 'cancelled':
+                return <span className="badge badge-danger">Cancelled</span>;
             default:
                 return <span className="badge badge-light">Unknown</span>;
         }
     };
 
-    // Compute status from startsAt/endsAt when backend doesn't provide `status`
+    // Compute status - prioritize backend status field, fallback to date-based computation
     const computeElectionStatus = (election) => {
         try {
+            // If backend provides a status field, use it directly
+            if (election?.status && ['draft', 'scheduled', 'active', 'completed', 'cancelled'].includes(election.status)) {
+                return election.status;
+            }
+
+            // Fallback: compute from dates if status not provided
             const now = new Date();
 
             const parseLenient = (value) => {
@@ -391,7 +403,7 @@ const VotingPage = () => {
                 if (ends < now) return 'completed';
             }
 
-            return election?.status || 'unknown';
+            return 'unknown';
         } catch (e) {
             return election?.status || 'unknown';
         }
