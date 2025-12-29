@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './TurnoutMonitoring.css';
+import axios from 'axios';
+import { API_ENDPOINTS } from '../../../../config/api';
 
 const TurnoutMonitoring = () => {
     const [selectedElection, setSelectedElection] = useState('');
@@ -8,18 +10,13 @@ const TurnoutMonitoring = () => {
         overall: {
             totalVoters: 0,
             votedCount: 0,
-            percentage: 0,
-            remainingTime: ''
+            percentage: 0
         },
-        regions: [],
-        hourlyData: [],
-        demographics: {
-            ageGroups: [],
-            genderDistribution: []
-        }
+        candidates: []
     });
-    const [refreshInterval, setRefreshInterval] = useState(30); // seconds
+    const [refreshInterval, setRefreshInterval] = useState(5); // Auto-refresh every 5 seconds
     const [lastUpdated, setLastUpdated] = useState(new Date());
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         loadElections();
@@ -29,7 +26,7 @@ const TurnoutMonitoring = () => {
         if (selectedElection) {
             loadTurnoutData();
             
-            // Set up auto-refresh
+            // Set up auto-refresh for real-time updates
             const interval = setInterval(() => {
                 loadTurnoutData();
             }, refreshInterval * 1000);
@@ -40,64 +37,38 @@ const TurnoutMonitoring = () => {
 
     const loadElections = async () => {
         try {
-            // Mock data - replace with actual API call
-            const mockElections = [
-                {
-                    id: 1,
-                    title: 'Presidential Election 2025',
-                    status: 'active',
-                    startDate: '2025-07-23',
-                    endDate: '2025-07-23'
-                },
-                {
-                    id: 2,
-                    title: 'City Council Election',
-                    status: 'active',
-                    startDate: '2025-08-15',
-                    endDate: '2025-08-15'
-                }
-            ];
-            setElections(mockElections);
-            if (mockElections.length > 0) {
-                setSelectedElection(mockElections[0].id.toString());
+            setLoading(true);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(API_ENDPOINTS.ADMIN.ELECTIONS, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const activeElections = response.data.filter(e => e.status === 'active');
+            setElections(activeElections);
+            if (activeElections.length > 0) {
+                setSelectedElection(activeElections[0]._id);
             }
         } catch (error) {
             console.error('Error loading elections:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
     const loadTurnoutData = async () => {
+        if (!selectedElection) return;
+        
         try {
-            // Mock data - replace with actual API call
-            const mockData = {
-                overall: {
-                    totalVoters: 15420,
-                    votedCount: 8945,
-                    percentage: 58.0,
-                    remainingTime: '3h 45m'
-                },
-                regions: [
-                    { name: 'North District', totalVoters: 3240, votedCount: 2180, percentage: 67.3, trend: 'up' },
-                    { name: 'South District', totalVoters: 2890, votedCount: 1634, percentage: 56.5, trend: 'stable' },
-                    { name: 'East District', totalVoters: 4120, votedCount: 2380, percentage: 57.8, trend: 'up' },
-                    { name: 'West District', totalVoters: 2760, votedCount: 1456, percentage: 52.8, trend: 'down' },
-                    { name: 'Central District', totalVoters: 2410, votedCount: 1295, percentage: 53.7, trend: 'stable' }
-                ],
-                hourlyData: [
-                    { hour: '08:00', votes: 245, cumulative: 245 },
-                    { hour: '09:00', votes: 456, cumulative: 701 },
-                    { hour: '10:00', votes: 623, cumulative: 1324 },
-                    { hour: '11:00', votes: 789, cumulative: 2113 },
-                    { hour: '12:00', votes: 892, cumulative: 3005 },
-                    { hour: '13:00', votes: 756, cumulative: 3761 },
-                    { hour: '14:00', votes: 923, cumulative: 4684 },
-                    { hour: '15:00', votes: 1145, cumulative: 5829 },
-                    { hour: '16:00', votes: 1289, cumulative: 7118 },
-                    { hour: '17:00', votes: 1456, cumulative: 8574 },
-                    { hour: '18:00', votes: 371, cumulative: 8945 }
-                ],
-                demographics: {
-                    ageGroups: [
+            const token = localStorage.getItem('token');
+            const response = await axios.get(
+                `${API_ENDPOINTS.ADMIN.TURNOUT}/${selectedElection}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setTurnoutData(response.data);
+            setLastUpdated(new Date());
+        } catch (error) {
+            console.error('Error loading turnout data:', error);
+        }
+    };
                         { group: '18-24', totalVoters: 2156, votedCount: 1234, percentage: 57.2 },
                         { group: '25-34', totalVoters: 3420, votedCount: 2145, percentage: 62.7 },
                         { group: '35-44', totalVoters: 3890, votedCount: 2456, percentage: 63.1 },
@@ -118,24 +89,6 @@ const TurnoutMonitoring = () => {
         }
     };
 
-    const getTrendIcon = (trend) => {
-        switch (trend) {
-            case 'up': return '📈';
-            case 'down': return '📉';
-            case 'stable': return '➡️';
-            default: return '➡️';
-        }
-    };
-
-    const getTrendColor = (trend) => {
-        switch (trend) {
-            case 'up': return '#28a745';
-            case 'down': return '#dc3545';
-            case 'stable': return '#ffc107';
-            default: return '#6c757d';
-        }
-    };
-
     const getPercentageColor = (percentage) => {
         if (percentage >= 70) return '#28a745';
         if (percentage >= 50) return '#ffc107';
@@ -152,7 +105,7 @@ const TurnoutMonitoring = () => {
 
     const exportData = () => {
         const dataToExport = {
-            election: elections.find(e => e.id.toString() === selectedElection)?.title,
+            election: elections.find(e => e._id === selectedElection)?.title,
             exportTime: new Date().toISOString(),
             turnoutData
         };
@@ -174,7 +127,7 @@ const TurnoutMonitoring = () => {
     return (
         <div className="turnout-monitoring-container">
             <div className="monitoring-header">
-                <h1>Turnout Monitoring</h1>
+                <h1>Real-Time Turnout Monitoring</h1>
                 <div className="header-controls">
                     <select
                         value={selectedElection}
@@ -183,7 +136,7 @@ const TurnoutMonitoring = () => {
                     >
                         <option value="">Select Election</option>
                         {elections.map(election => (
-                            <option key={election.id} value={election.id}>
+                            <option key={election._id} value={election._id}>
                                 {election.title}
                             </option>
                         ))}
@@ -196,10 +149,10 @@ const TurnoutMonitoring = () => {
                             onChange={(e) => setRefreshInterval(parseInt(e.target.value))}
                             className="refresh-select"
                         >
+                            <option value={5}>5s (Real-time)</option>
                             <option value={10}>10s</option>
                             <option value={30}>30s</option>
                             <option value={60}>1m</option>
-                            <option value={300}>5m</option>
                         </select>
                     </div>
                     
@@ -209,17 +162,26 @@ const TurnoutMonitoring = () => {
                 </div>
             </div>
 
+            {loading && <div className="loading">Loading elections...</div>}
+
+            {!loading && elections.length === 0 && (
+                <div className="no-elections">
+                    <h3>No Active Elections</h3>
+                    <p>Create an election and set its status to "Active" to monitor turnout.</p>
+                </div>
+            )}
+
             {selectedElection && (
                 <>
                     <div className="last-updated">
-                        Last updated: {formatTime(lastUpdated)}
+                        ⚡ Live Updates Every {refreshInterval}s | Last updated: {formatTime(lastUpdated)}
                     </div>
 
                     {/* Overall Statistics */}
                     <div className="overall-stats">
                         <div className="stat-card primary">
                             <div className="stat-header">
-                                <h3>Overall Turnout</h3>
+                                <h3>📊 Overall Turnout - {turnoutData.title}</h3>
                                 <div className="stat-trend">
                                     <span 
                                         className="percentage"
@@ -231,7 +193,7 @@ const TurnoutMonitoring = () => {
                             </div>
                             <div className="stat-details">
                                 <div className="voter-count">
-                                    {turnoutData.overall.votedCount.toLocaleString()} / {turnoutData.overall.totalVoters.toLocaleString()} voters
+                                    <strong>{turnoutData.overall.votedCount.toLocaleString()}</strong> / {turnoutData.overall.totalVoters.toLocaleString()} voters
                                 </div>
                                 <div className="progress-bar">
                                     <div 
@@ -242,41 +204,58 @@ const TurnoutMonitoring = () => {
                                         }}
                                     ></div>
                                 </div>
-                                <div className="remaining-time">
-                                    Time remaining: {turnoutData.overall.remainingTime}
-                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div className="monitoring-content">
-                        {/* Regional Breakdown */}
+                        {/* Candidate Breakdown */}
                         <div className="monitoring-section">
-                            <h2>Regional Breakdown</h2>
-                            <div className="regions-grid">
-                                {turnoutData.regions.map((region, index) => (
-                                    <div key={index} className="region-card">
-                                        <div className="region-header">
-                                            <h4>{region.name}</h4>
-                                            <div className="region-trend">
-                                                <span style={{ color: getTrendColor(region.trend) }}>
-                                                    {getTrendIcon(region.trend)}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="region-stats">
-                                            <div className="region-percentage">
-                                                <span 
-                                                    className="percentage-large"
-                                                    style={{ color: getPercentageColor(region.percentage) }}
-                                                >
-                                                    {region.percentage}%
-                                                </span>
+                            <h2>🗳️ Live Vote Distribution</h2>
+                            {turnoutData.candidates && turnoutData.candidates.length > 0 ? (
+                                <div className="candidates-grid">
+                                    {turnoutData.candidates.map((candidate, index) => (
+                                        <div key={index} className="candidate-card">
+                                            <div className="candidate-header">
+                                                <h4>{candidate.name}</h4>
+                                                <span className="party">{candidate.party}</span>
                                             </div>
                                             
-                                            <div className="region-details">
-                                                <div className="voter-count">
+                                            <div className="candidate-stats">
+                                                <div className="votes-large">
+                                                    <span className="votes-count">{candidate.votes}</span>
+                                                    <span className="votes-label">votes</span>
+                                                </div>
+                                                
+                                                <div className="candidate-percentage">
+                                                    <span 
+                                                        className="percentage-value"
+                                                        style={{ color: getPercentageColor(parseFloat(candidate.percentage)) }}
+                                                    >
+                                                        {candidate.percentage}%
+                                                    </span>
+                                                </div>
+
+                                                <div className="progress-bar small">
+                                                    <div 
+                                                        className="progress-fill"
+                                                        style={{ 
+                                                            width: `${candidate.percentage}%`,
+                                                            backgroundColor: getPercentageColor(parseFloat(candidate.percentage))
+                                                        }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="no-data">
+                                    <p>No votes cast yet. Waiting for voters...</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                                                     {region.votedCount.toLocaleString()} / {region.totalVoters.toLocaleString()}
                                                 </div>
                                                 <div className="progress-bar-small">
@@ -398,25 +377,14 @@ const TurnoutMonitoring = () => {
                                                 </span>
                                             </div>
                                             <div className="demographic-details">
-                                                <div className="demographic-count">
-                                                    {gender.votedCount.toLocaleString()} / {gender.totalVoters.toLocaleString()}
-                                                </div>
-                                                <div className="progress-bar-small">
-                                                    <div 
-                                                        className="progress-fill-small"
-                                                        style={{ 
-                                                            width: `${gender.percentage}%`,
-                                                            backgroundColor: getPercentageColor(gender.percentage)
-                                                        }}
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
                     </div>
+                </>
+            )}
+        </div>
+    );
+};
+
+export default TurnoutMonitoring;
                 </>
             )}
         </div>
