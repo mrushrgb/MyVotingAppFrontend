@@ -1,24 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import './ElectionManagement.css';
 import Swal from 'sweetalert2';
+import axios from 'axios';
+import { API_ENDPOINTS } from '../../../../config/api';
 
 const ElectionManagement = () => {
     const [elections, setElections] = useState([]);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [editingElection, setEditingElection] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         title: '',
         description: '',
-        startDate: '',
-        endDate: '',
-        regions: [],
-        candidates: [],
-        status: 'draft'
+        startsAt: '',
+        endsAt: '',
+        candidates: []
     });
-    const [availableRegions] = useState([
-        'North District', 'South District', 'East District', 'West District',
-        'Central District', 'Metropolitan Area', 'Rural Areas'
-    ]);
 
     useEffect(() => {
         loadElections();
@@ -26,43 +23,17 @@ const ElectionManagement = () => {
 
     const loadElections = async () => {
         try {
-            // Mock data - replace with actual API call
-            const mockElections = [
-                {
-                    id: 1,
-                    title: 'Presidential Election 2025',
-                    description: 'National presidential election',
-                    startDate: '2025-11-01',
-                    endDate: '2025-11-01',
-                    regions: ['North District', 'South District', 'East District'],
-                    candidates: [
-                        { id: 1, name: 'John Smith', party: 'Democratic Party', position: 'President' },
-                        { id: 2, name: 'Jane Doe', party: 'Republican Party', position: 'President' }
-                    ],
-                    status: 'active',
-                    totalVoters: 15420,
-                    votesCount: 8945
-                },
-                {
-                    id: 2,
-                    title: 'City Council Election',
-                    description: 'Local city council representatives',
-                    startDate: '2025-08-15',
-                    endDate: '2025-08-15',
-                    regions: ['Central District', 'Metropolitan Area'],
-                    candidates: [
-                        { id: 3, name: 'Mike Johnson', party: 'Independent', position: 'Council Member' },
-                        { id: 4, name: 'Sarah Wilson', party: 'Green Party', position: 'Council Member' }
-                    ],
-                    status: 'scheduled',
-                    totalVoters: 5620,
-                    votesCount: 0
-                }
-            ];
-            setElections(mockElections);
+            setLoading(true);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(API_ENDPOINTS.ADMIN.ELECTIONS, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setElections(response.data);
         } catch (error) {
             console.error('Error loading elections:', error);
-            Swal.fire('Error', 'Failed to load elections', 'error');
+            Swal.fire('Error', 'Failed to load elections: ' + (error.response?.data?.msg || error.message), 'error');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -71,15 +42,6 @@ const ElectionManagement = () => {
         setFormData(prev => ({
             ...prev,
             [name]: value
-        }));
-    };
-
-    const handleRegionChange = (region) => {
-        setFormData(prev => ({
-            ...prev,
-            regions: prev.regions.includes(region)
-                ? prev.regions.filter(r => r !== region)
-                : [...prev.regions, region]
         }));
     };
 
@@ -93,9 +55,6 @@ const ElectionManagement = () => {
                     
                     <label style="display: block; margin-bottom: 5px; font-weight: bold;">Party:</label>
                     <input id="candidateParty" class="swal2-input" placeholder="Political Party" style="margin-bottom: 10px;">
-                    
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Position:</label>
-                    <input id="candidatePosition" class="swal2-input" placeholder="Position" style="margin-bottom: 10px;">
                 </div>
             `,
             focusConfirm: false,
@@ -105,51 +64,41 @@ const ElectionManagement = () => {
             preConfirm: () => {
                 const name = document.getElementById('candidateName').value;
                 const party = document.getElementById('candidateParty').value;
-                const position = document.getElementById('candidatePosition').value;
                 
-                if (!name || !party || !position) {
+                if (!name || !party) {
                     Swal.showValidationMessage('Please fill in all fields');
                     return false;
                 }
                 
-                return { name, party, position };
+                return { name, party };
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                const newCandidate = {
-                    id: Date.now(),
-                    ...result.value
-                };
                 setFormData(prev => ({
                     ...prev,
-                    candidates: [...prev.candidates, newCandidate]
+                    candidates: [...prev.candidates, result.value]
                 }));
             }
         });
     };
 
-    const handleRemoveCandidate = (candidateId) => {
+    const handleRemoveCandidate = (candidateIndex) => {
         setFormData(prev => ({
             ...prev,
-            candidates: prev.candidates.filter(c => c.id !== candidateId)
+            candidates: prev.candidates.filter((_, index) => index !== candidateIndex)
         }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        if (!formData.title || !formData.startDate || !formData.endDate) {
+        if (!formData.title || !formData.startsAt || !formData.endsAt) {
             Swal.fire('Error', 'Please fill in all required fields', 'error');
             return;
         }
 
-        if (new Date(formData.startDate) > new Date(formData.endDate)) {
+        if (new Date(formData.startsAt) > new Date(formData.endsAt)) {
             Swal.fire('Error', 'End date must be after start date', 'error');
-            return;
-        }
-
-        if (formData.regions.length === 0) {
-            Swal.fire('Error', 'Please select at least one region', 'error');
             return;
         }
 
@@ -159,40 +108,43 @@ const ElectionManagement = () => {
         }
 
         try {
-            const electionData = {
-                ...formData,
-                id: editingElection ? editingElection.id : Date.now(),
-                totalVoters: 0,
-                votesCount: 0
-            };
-
+            setLoading(true);
+            const token = localStorage.getItem('token');
+            
             if (editingElection) {
                 // Update existing election
-                setElections(prev => prev.map(e => 
-                    e.id === editingElection.id ? electionData : e
-                ));
+                await axios.put(
+                    `${API_ENDPOINTS.ADMIN.ELECTIONS}/${editingElection._id}`,
+                    formData,
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
                 Swal.fire('Success', 'Election updated successfully', 'success');
             } else {
                 // Create new election
-                setElections(prev => [...prev, electionData]);
+                await axios.post(
+                    API_ENDPOINTS.ADMIN.ELECTIONS,
+                    formData,
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
                 Swal.fire('Success', 'Election created successfully', 'success');
             }
 
-            // Reset form
+            // Reload elections and reset form
+            await loadElections();
             setFormData({
                 title: '',
                 description: '',
-                startDate: '',
-                endDate: '',
-                regions: [],
-                candidates: [],
-                status: 'draft'
+                startsAt: '',
+                endsAt: '',
+                candidates: []
             });
             setShowCreateForm(false);
             setEditingElection(null);
         } catch (error) {
             console.error('Error saving election:', error);
-            Swal.fire('Error', 'Failed to save election', 'error');
+            Swal.fire('Error', 'Failed to save election: ' + (error.response?.data?.msg || error.message), 'error');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -201,17 +153,15 @@ const ElectionManagement = () => {
         setFormData({
             title: election.title,
             description: election.description,
-            startDate: election.startDate,
-            endDate: election.endDate,
-            regions: election.regions,
-            candidates: election.candidates,
-            status: election.status
+            startsAt: election.startsAt ? election.startsAt.split('T')[0] : '',
+            endsAt: election.endsAt ? election.endsAt.split('T')[0] : '',
+            candidates: election.candidates || []
         });
         setShowCreateForm(true);
     };
 
-    const handleDelete = (electionId) => {
-        Swal.fire({
+    const handleDelete = async (electionId) => {
+        const result = await Swal.fire({
             title: 'Delete Election',
             text: 'Are you sure you want to delete this election? This action cannot be undone.',
             icon: 'warning',
@@ -219,19 +169,25 @@ const ElectionManagement = () => {
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
             confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                setElections(prev => prev.filter(e => e.id !== electionId));
-                Swal.fire('Deleted!', 'Election has been deleted.', 'success');
-            }
         });
-    };
-
-    const handleStatusChange = (electionId, newStatus) => {
-        setElections(prev => prev.map(e => 
-            e.id === electionId ? { ...e, status: newStatus } : e
-        ));
-        Swal.fire('Updated', `Election status changed to ${newStatus}`, 'success');
+        
+        if (result.isConfirmed) {
+            try {
+                setLoading(true);
+                const token = localStorage.getItem('token');
+                await axios.delete(
+                    `${API_ENDPOINTS.ADMIN.ELECTIONS}/${electionId}`,
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+                await loadElections();
+                Swal.fire('Deleted!', 'Election has been deleted.', 'success');
+            } catch (error) {
+                console.error('Error deleting election:', error);
+                Swal.fire('Error', 'Failed to delete election', 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
     };
 
     const getStatusColor = (status) => {
@@ -305,21 +261,6 @@ const ElectionManagement = () => {
                                     required
                                 />
                             </div>
-
-                            <div className="form-group">
-                                <label>Status</label>
-                                <select
-                                    name="status"
-                                    value={formData.status}
-                                    onChange={handleInputChange}
-                                >
-                                    <option value="draft">Draft</option>
-                                    <option value="scheduled">Scheduled</option>
-                                    <option value="active">Active</option>
-                                    <option value="completed">Completed</option>
-                                    <option value="cancelled">Cancelled</option>
-                                </select>
-                            </div>
                         </div>
 
                         <div className="form-group">
@@ -338,8 +279,8 @@ const ElectionManagement = () => {
                                 <label>Start Date *</label>
                                 <input
                                     type="date"
-                                    name="startDate"
-                                    value={formData.startDate}
+                                    name="startsAt"
+                                    value={formData.startsAt}
                                     onChange={handleInputChange}
                                     required
                                 />
@@ -349,28 +290,11 @@ const ElectionManagement = () => {
                                 <label>End Date *</label>
                                 <input
                                     type="date"
-                                    name="endDate"
-                                    value={formData.endDate}
+                                    name="endsAt"
+                                    value={formData.endsAt}
                                     onChange={handleInputChange}
                                     required
                                 />
-                            </div>
-                        </div>
-
-                        <div className="form-group">
-                            <label>Regions *</label>
-                            <div className="regions-grid">
-                                {availableRegions.map(region => (
-                                    <label key={region} className="region-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            checked={formData.regions.includes(region)}
-                                            onChange={() => handleRegionChange(region)}
-                                        />
-                                        <span className="checkmark"></span>
-                                        {region}
-                                    </label>
-                                ))}
                             </div>
                         </div>
 
@@ -387,17 +311,16 @@ const ElectionManagement = () => {
                             </div>
                             
                             <div className="candidates-list">
-                                {formData.candidates.map(candidate => (
-                                    <div key={candidate.id} className="candidate-item">
+                                {formData.candidates.map((candidate, index) => (
+                                    <div key={index} className="candidate-item">
                                         <div className="candidate-info">
                                             <span className="candidate-name">{candidate.name}</span>
                                             <span className="candidate-party">{candidate.party}</span>
-                                            <span className="candidate-position">{candidate.position}</span>
                                         </div>
                                         <button
                                             type="button"
                                             className="remove-candidate-btn"
-                                            onClick={() => handleRemoveCandidate(candidate.id)}
+                                            onClick={() => handleRemoveCandidate(index)}
                                         >
                                             ✕
                                         </button>
@@ -412,8 +335,8 @@ const ElectionManagement = () => {
                         </div>
 
                         <div className="form-actions">
-                            <button type="submit" className="submit-btn">
-                                {editingElection ? 'Update Election' : 'Create Election'}
+                            <button type="submit" className="submit-btn" disabled={loading}>
+                                {loading ? 'Saving...' : (editingElection ? 'Update Election' : 'Create Election')}
                             </button>
                             <button 
                                 type="button" 
@@ -421,6 +344,13 @@ const ElectionManagement = () => {
                                 onClick={() => {
                                     setShowCreateForm(false);
                                     setEditingElection(null);
+                                    setFormData({
+                                        title: '',
+                                        description: '',
+                                        startsAt: '',
+                                        endsAt: '',
+                                        candidates: []
+                                    });
                                 }}
                             >
                                 Cancel
@@ -431,7 +361,9 @@ const ElectionManagement = () => {
             )}
 
             <div className="elections-list">
-                {elections.length === 0 ? (
+                {loading ? (
+                    <div className="loading">Loading elections...</div>
+                ) : elections.length === 0 ? (
                     <div className="no-elections">
                         <div className="no-elections-icon">🗳️</div>
                         <h3>No Elections Found</h3>
@@ -439,16 +371,10 @@ const ElectionManagement = () => {
                     </div>
                 ) : (
                     elections.map(election => (
-                        <div key={election.id} className="election-card">
+                        <div key={election._id} className="election-card">
                             <div className="election-header-card">
                                 <div className="election-title-section">
                                     <h3>{election.title}</h3>
-                                    <span 
-                                        className="election-status"
-                                        style={{ backgroundColor: getStatusColor(election.status) }}
-                                    >
-                                        {election.status.toUpperCase()}
-                                    </span>
                                 </div>
                                 <div className="election-actions">
                                     <button 
@@ -460,7 +386,7 @@ const ElectionManagement = () => {
                                     </button>
                                     <button 
                                         className="action-btn delete"
-                                        onClick={() => handleDelete(election.id)}
+                                        onClick={() => handleDelete(election._id)}
                                         title="Delete Election"
                                     >
                                         🗑️
@@ -474,59 +400,38 @@ const ElectionManagement = () => {
                                 <div className="detail-item">
                                     <span className="detail-label">Period:</span>
                                     <span className="detail-value">
-                                        {formatDate(election.startDate)} - {formatDate(election.endDate)}
-                                    </span>
-                                </div>
-
-                                <div className="detail-item">
-                                    <span className="detail-label">Regions:</span>
-                                    <span className="detail-value">
-                                        {election.regions.join(', ')}
+                                        {new Date(election.startsAt).toLocaleDateString()} - {new Date(election.endsAt).toLocaleDateString()}
                                     </span>
                                 </div>
 
                                 <div className="detail-item">
                                     <span className="detail-label">Candidates:</span>
                                     <span className="detail-value">
-                                        {election.candidates.length} candidate{election.candidates.length !== 1 ? 's' : ''}
+                                        {election.candidates?.length || 0} candidate{election.candidates?.length !== 1 ? 's' : ''}
                                     </span>
                                 </div>
 
                                 <div className="detail-item">
-                                    <span className="detail-label">Turnout:</span>
+                                    <span className="detail-label">Votes:</span>
                                     <span className="detail-value">
-                                        {election.votesCount} / {election.totalVoters} voters 
-                                        ({election.totalVoters > 0 ? ((election.votesCount / election.totalVoters) * 100).toFixed(1) : 0}%)
+                                        {election.votes?.length || 0} vote{election.votes?.length !== 1 ? 's' : ''}
                                     </span>
                                 </div>
                             </div>
 
-                            <div className="candidates-preview">
-                                <h4>Candidates:</h4>
-                                <div className="candidates-grid">
-                                    {election.candidates.map(candidate => (
-                                        <div key={candidate.id} className="candidate-preview">
-                                            <span className="candidate-name">{candidate.name}</span>
-                                            <span className="candidate-party">({candidate.party})</span>
-                                        </div>
-                                    ))}
+                            {election.candidates && election.candidates.length > 0 && (
+                                <div className="candidates-preview">
+                                    <h4>Candidates:</h4>
+                                    <div className="candidates-grid">
+                                        {election.candidates.map((candidate, index) => (
+                                            <div key={index} className="candidate-preview">
+                                                <span className="candidate-name">{candidate.name}</span>
+                                                <span className="candidate-party">({candidate.party})</span>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div className="status-actions">
-                                <label>Change Status:</label>
-                                <select
-                                    value={election.status}
-                                    onChange={(e) => handleStatusChange(election.id, e.target.value)}
-                                    className="status-select"
-                                >
-                                    <option value="draft">Draft</option>
-                                    <option value="scheduled">Scheduled</option>
-                                    <option value="active">Active</option>
-                                    <option value="completed">Completed</option>
-                                    <option value="cancelled">Cancelled</option>
-                                </select>
-                            </div>
+                            )}
                         </div>
                     ))
                 )}
