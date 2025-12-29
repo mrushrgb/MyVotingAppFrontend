@@ -242,8 +242,8 @@
 }
 
 .candidate-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.06);
+    background: linear-gradient(135deg, rgba(108, 92, 231, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+    border: 1px solid rgba(255,255,255,0.15);
     border-radius: 12px;
     padding: 20px;
     transition: all 0.3s ease;
@@ -253,18 +253,20 @@
     flex-direction: column;
     height: 100%;
     color: #ffffff;
+    backdrop-filter: blur(10px);
 }
 
 .candidate-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    border-color: #6c5ce7;
+    box-shadow: 0 10px 25px rgba(108, 92, 231, 0.3);
+    border-color: rgba(255,255,255,0.3);
+    background: linear-gradient(135deg, rgba(108, 92, 231, 0.25) 0%, rgba(118, 75, 162, 0.25) 100%);
 }
 
 .candidate-card.selected {
     border-color: #27ae60;
-    background: #f8fff8;
-    box-shadow: 0 10px 25px rgba(39, 174, 96, 0.2);
+    background: linear-gradient(135deg, rgba(39, 174, 96, 0.2) 0%, rgba(46, 213, 115, 0.2) 100%);
+    box-shadow: 0 10px 25px rgba(39, 174, 96, 0.3);
 }
 
 .candidate-photo {
